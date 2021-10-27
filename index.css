@@ -14,26 +14,32 @@
     flex-direction: column;
     justify-content: center;
 }
-.result{
-    width: 96%;
-    background-color: white;
-    height: 35px;
-    text-align: right;
-    display: flex;
-    justify-content: end;
-    align-items: center;
-    padding: 0 1%;
-    margin: 1%; 
-}
-.result p{
-    margin: 2px;
-}
-.numbers,.erase{
+.numbers,.erase,.equation,.result{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     
 }
+.equation ,.result{
+    width: 96%;
+    color: gray;
+    background-color: white;
+    height: 22px;
+    text-align: right;
+    justify-content: end;
+    align-items: center;
+    padding: 0 1%; 
+    margin: 0 1%;
+}
+.result{ 
+    color: black;
+    height: 35px;
+    margin-bottom: 3%;
+}
+.result p{
+    margin: 2px;
+}
+
 
 .erase .button{
     width: 15%; 
@@ -52,7 +58,10 @@
     background-color: red;
 }
 @media only screen and  (max-width: 1200px){
-    .result{
+    .calculator{
+        padding: 4%;
+    }
+    .equation,.result{
         width: 94%; 
     }
     .button{
@@ -62,7 +71,7 @@
    
 }
 @media only screen and  (max-width: 768px){
-    .result{
+    .equation,.result{
         width: 95%; 
     }
     .button{
