@@ -83,7 +83,7 @@ body{
 }
 @media only screen and  (max-width: 1200px){
     .calculator{
-        padding: 3  %;
+        padding: 3%;
     }
     .equation,.result{
         width: 94%; 
