@@ -15,33 +15,36 @@ function getQuo(firstNum,secondNum){
     return parseFloat(firstNum)/ parseFloat(secondNum);
 }
 function getTotal(){
-    let all = Array.from(total.querySelectorAll("p"));
-    let equation = all.map(each=>each.textContent)
+    let equation = total.textContent.split(" ");
     usedequation.textContent = equation.join(" ") +" =";
     for(let counter = 0; counter < symbol.length;counter++){
         let mdas = equation.findIndex(a => a === symbol[counter]); 
         if(mdas !== -1){
             let sign = equation.filter(sign=>sign === symbol[counter]).length; 
-            while(sign != 0){  
+            while(sign != 0){ 
+                console.log("x"+sign); 
+                console.log(equation);
+                console.log(mdas+"s");
+                let signloc = equation.findIndex(currentSign => currentSign === symbol[counter])
                 switch(symbol[counter]){
                     case "x":
-                        let prod = String(getProd(equation[mdas-1],equation[mdas+1]));
-                        equation.splice(mdas-1,3,prod);
+                        let prod = String(getProd(equation[signloc-1],equation[signloc+1]));
+                        equation.splice(signloc-1,3,prod);
                         console.log(prod);
                         break;
                     case "/":
-                        let quo = String(getQuo(equation[mdas-1],equation[mdas+1]));
-                        equation.splice(mdas-1,3,quo);
+                        let quo = String(getQuo(equation[signloc-1],equation[signloc+1]));
+                        equation.splice(signloc-1,3,quo);
                         console.log(quo);
                         break;
                     case "+":
-                        let sum = String(getSum(equation[mdas-1],equation[mdas+1]));
-                        equation.splice(mdas-1,3,sum);
+                        let sum = String(getSum(equation[signloc-1],equation[signloc+1]));
+                        equation.splice(signloc-1,3,sum);
                         console.log(sum);
                         break;
                     case "-":
-                        let diff = String(getDiff(equation[mdas-1],equation[mdas+1]));
-                        equation.splice(mdas-1,3,diff);
+                        let diff = String(getDiff(equation[signloc-1],equation[signloc+1]));
+                        equation.splice(signloc-1,3,diff);
                         console.log(diff);
                         break;
                     default:
@@ -49,58 +52,64 @@ function getTotal(){
                     break;
                 }
                 sign--; 
-            }    
+            }
+            continue;    
         }else{
             continue;
         }    
     }
-    total.textContent = equation;  
+    total.textContent =String(equation) ;  
 }
 function insertNewValue(val){
-    let newValue = document.createElement("p");
-
+    let newV = document.createTextNode(`${val}`);
+    total.append(newV);
+    
     if(symbol.includes(val)){
-        console.log(val+"a");
-        newValue.innerHTML = val;
-        total.appendChild(newValue);
-    }else{
-        let lastNode = total.lastElementChild
-        let newNumber = document.createTextNode(`${val}`);
-        if(!(total.hasChildNodes()) ||  symbol.includes(lastNode.textContent)){
-            console.log(val+"s");
-            newValue.innerHTML = val;
-            total.appendChild(newValue);
-        }
-        else{
-          lastNode.appendChild(newNumber);
-          
-        }
-        
+        total.append(" "); 
+        total.append(newV);
+        total.append(" ");
     }
-
+}
+function eraseValue(){
+            let lastNode = total.textContent
+            if(lastNode == "0" || usedequation.textContent != "0"){
+                total.textContent ="0";
+            }else if(symbol.includes(lastNode[lastNode.length-2])){
+                console.log(lastNode[lastNode.length-2]);
+                total.textContent = lastNode.slice(0,lastNode.length-3);
+            }else if(total.hasChildNodes()){
+                if(lastNode == "NaN"){
+                    total.textContent ="0";
+                }
+                total.textContent = lastNode.slice(0,-1); 
+            }
 }
 let numpad = document.querySelectorAll(".button");
 numpad.forEach(npad =>npad.addEventListener('click',function(e){
-    console.log(e.target.textContent);
-    switch(e.target.textContent){
-        case "=":
-            getTotal();
-            break;
-        case "C":
-            total.textContent ="0";
-            break;
-        case "CE":
-            let lastNode = total.lastElementChild
-            if(total.hasChildNodes() && symbol.includes(lastNode.textContent)){
-                total.removeChild(lastNode);
-            }
-            break;
-        default:
-            if(total.textContent === "0"){
-                total.textContent ="";
-            }
-            insertNewValue(e.target.textContent);
-            break;
-    }
-   
+     switch(e.target.textContent){
+                case "=":
+                    getTotal();//shows the result of the equation
+                    break;
+                case "C":
+                    total.textContent ="0";//set the content to 0 again
+                    break;
+                case "CE":
+                    eraseValue();//removes the last value added
+                    break;
+                default:
+                    if(usedequation.textContent != "0" ){
+                        let lastnode = total.textContent
+                        eraseValue(); 
+                        usedequation.textContent = "0";
+                        total.textContent ="";
+                        if(lastnode !== "NaN"){insertNewValue(lastnode);} 
+                       
+                    }
+                    if(total.textContent == "0"){
+                        total.textContent ="";//removes the 0 value in the result div
+                    }
+                   
+                    insertNewValue(e.target.textContent);//add the number or sign thats selected
+                    break;
+        }  
 }))
