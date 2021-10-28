@@ -59,22 +59,26 @@ function getTotal(){
             continue;//if the symbol value is not in the equation proceed to the counter
         }    
     }
-    
-    total.textContent =String(equation) ;  //show the result
+    !(equation == "NaN")?total.textContent = String(equation):total.textContent ="ERROR!";
+      //show the result
 }
 //insert a value
 function insertNewValue(val){
     let newV = document.createTextNode(`${val}`);//set the val as a textnode
     let currentNode = total.textContent;
     let posneg = ["+","-"];
-    //if val includes in posneg and (if the node is blank or the last node is not included in symbol array which is number or decimal.)
-    if(posneg.includes(val) && (currentNode === "" || !(symbol.includes(currentNode[currentNode.length-1])))){
+    if(posneg.includes(val)){
         //if the node is strictly equal to zero or the second to the last node is included in the symbol array
-        if( currentNode.length === 0 || symbol.includes(currentNode[currentNode.length-2])){ 
+        if(currentNode.length > 0){
+                if(currentNode[currentNode.length-1] == " "){
+                    total.append(newV);
+                }else{
+                    insertSign(newV); 
+                }        
+        }
+        else if( currentNode.length === 0){ 
             total.append(newV);//add the + or - sign 
-        }else{
-            insertSign(newV);// add the sign as a operator
-        }  
+        } 
     }
     else if(!(symbol.includes(val))){//if its not include in the val
         total.append(newV);//add
@@ -89,6 +93,7 @@ function insertSign(sign){
     total.append(sign);
     total.append(" ");
 }
+//erase a value
 function eraseValue(){
             let currentNode = total.textContent;// get the current textContent of the node when value is added
             if(currentNode == "0" || usedequation.textContent != "0"||currentNode === "NaN"){ // value of currentNode and usedEquation is "0" or "NaN"
