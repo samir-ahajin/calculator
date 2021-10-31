@@ -50,9 +50,7 @@ body{
 .erase .button{
     width: 15%; 
 }
-.erase{
-    height: 20%;
-}
+
 .numbers{
     height: 80%;
 }
@@ -89,7 +87,7 @@ body{
         width: 94%; 
     }
     .button{
-        flex:1 1 10%;
+        flex:1 1 9%;
         margin: 2%;
     }
    
@@ -98,11 +96,6 @@ body{
 
     .equation,.result{
         width: 95%;  
-    }
-    .button{
-        flex:1 1 9%;
-        margin: 2%;
-    }
-   
+    }   
 }
 
