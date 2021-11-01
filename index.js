@@ -1,7 +1,12 @@
 let total = document.querySelector('.result');
 let usedequation = document.querySelector('.equation');
-let symbol= ["(","^","x","/","+","-"]; 
+let numButton = document.querySelectorAll('.number');
+let decButton = document.querySelector('.dec');
+let allButton = document.querySelectorAll('.button');
+let symbol= ["(","^","x","/","+","-"];
+let completeSymbol= ["(",")","^","x","/","+","-"];  
 let paren = ["(",")"]
+let posneg = ["+","-"];
 let parentheses = document.querySelector(".parentheses");
 
 //parentheses
@@ -69,7 +74,8 @@ function getTotal(currentVal){
         let mdas = equation.findIndex(a => a === symbol[counter]);//getting the index of the symbol value 
         if(mdas !== -1){ //if the symbol value is in the equation
             let sign = equation.filter(sign=>sign === symbol[counter]).length;//getting all the symbol in the equation and to determine how many are there
-            while(sign != 0){ //if value of sign is still not zero then proceed
+            while(sign != 0){5
+                //if value of sign is still not zero then proceed
                 let signloc = equation.findIndex(currentSign => currentSign === symbol[counter]);//locate the first current symbol in the equation
                 solveEquation(symbol,counter,equation,signloc);
                 sign--;//reduces the value of the sign until it reaches zero
@@ -82,7 +88,7 @@ function getTotal(currentVal){
     return equation;
    
 }
-
+//solve the equation
 function solveEquation(operators,counter,currentEquation,signloc){
     switch(operators[counter]){
         // equation[signloc] the current symbol index 
@@ -120,56 +126,58 @@ function solveEquation(operators,counter,currentEquation,signloc){
 //insert a value
 function insertNewValue(val){
     let newV = document.createTextNode(`${val}`);//set the val as a textnode
-    let currentNode = total.textContent;
-    let posneg = ["+","-","(",")"];
-    if(posneg.includes(val)){
-        //if the node is strictly equal to zero or the second to the last node is included in the symbol array
-        if(currentNode.length > 0){
-                if(currentNode[currentNode.length-1] === " "){
-                    total.append(newV);  
-                }else{ 
-                    if(val === ")"){
-                        parentheses.textContent = "(";
-                    }else if(val=="("){
-                        parentheses.textContent = ")";
-                    };
-                    insertSign(newV);
-                }        
+    let currentNode = total.textContent; 
+    if(completeSymbol.includes(val)){
+        if(paren.includes(val)){determinePar(val);}
+        console.log("hello");
+        if(symbol.includes(val)){
+            removeEffect('all');
         }
-        else if( currentNode.length === 0){  //add the + or - sign or (
-                total.append(newV); 
-        } 
-    }
-    //
-    else if(!(symbol.includes(val))){//if val does not include in the symbol
-        if((currentNode.length === 1 && symbol.includes(val)) || symbol.includes(currentNode[currentNode.length-1])){
-            currentNode === ")"?  parentheses.textContent = "(":parentheses.textContent = ")";
-            total.append(" ");
-            total.append(newV);
-            
-        }else{
-            total.append(newV);//add
-        }
-       
+        insertSign(newV);     
     }else{
-        insertSign(newV);//insert the sign as an operator
-        determinePar(val);
-   
-    }
-    
+        if((posneg.includes(currentNode[currentNode.length-1]) && symbol.includes(currentNode[currentNode.length-3])) || (posneg.includes(currentNode[currentNode.length-1]) && currentNode[currentNode.length-3] === undefined)){
+            total.append(newV);
+        }else{
+            console.log();
+           if(completeSymbol.includes(currentNode[currentNode.length-1])){
+                if(val == '.'){
+                    decButton.classList.add('disabled');
+                }
+                insertSign(newV); 
+           }
+           else if(!(completeSymbol.includes(val))){ 
+               
+               if(val == '.'){
+                   decButton.classList.add('disabled');
+               }
+               total.append(newV);
+            } 
+        }
+    }  
 }
 //insert the operator with a space
 function insertSign(sign){
-    total.append(" "); 
-    total.append(sign);
     total.append(" ");
+    total.append(sign);
+    
 }
+function removeEffect(remove){
+    if(remove == 'dec'){
+        decButton.classList.remove("disabled");
+    }else if(remove == 'all'){
+        numButton.forEach(val=>val.classList.remove("disabled"));
+    }
+    
+}
+//determin the parentheses
 function determinePar(parVal){
     switch(parVal){
         case ")":
+            numButton.forEach(val=>val.classList.add("disabled"));
             parentheses.textContent = "(";
             break;
         case "(":
+            numButton.forEach(val=>val.classList.remove("disabled"));
             parentheses.textContent = ")";
             break;
     }
@@ -177,18 +185,22 @@ function determinePar(parVal){
 
 //erase a value
 function eraseValue(){
-            let currentNode = total.textContent;// get the current textContent of the node when value is added
-            if(currentNode == "0" || usedequation.textContent != "0"||currentNode === "NaN"){ // value of currentNode and usedEquation is "0" or "NaN"
-                total.textContent="0";
-            }else if(symbol.includes(currentNode[currentNode.length-2])){//if the 2nd to the last value of node is included the symbol
-                total.textContent = currentNode.slice(0,currentNode.length-3);//remove the operator with the space added
-                
+        let currentNode = total.textContent;// get the current textContent of the node when value is added
+        
+        if(posneg.includes(currentNode[currentNode.length-2])){
+            total.textContent = currentNode.slice(0,currentNode.length-1);  
+        }else{
+            if(!(completeSymbol.includes(currentNode[currentNode.length-1])) && currentNode[currentNode.length-1] !== " "){//delete the left side number 
+                if(currentNode[currentNode.length-1]=="."){
+                    removeEffect('dec');
+                }
+                total.textContent = currentNode.slice(0,currentNode.length-1);console.log('hello');
             }else{
-                total.textContent = currentNode.slice(0,-1);//remove the current number
-                if(total.textContent.length === 0){//when the lenght is zero add a "0"
-                    total.textContent ="0";
-                }    
+                
+                total.textContent = currentNode.slice(0,currentNode.length-2);//delete the single number with space  
             }
+            if(currentNode.length===0){total.textContent="0";}
+        }     
 }
 //end list of the functions
 
@@ -197,15 +209,31 @@ let numpad = document.querySelectorAll(".button");
 numpad.forEach(npad =>npad.addEventListener('click',function(e){
      switch(e.target.textContent){
                 case "=":
+                    //result show with decimal or not
                     let finalResult = getTotal(total.textContent);//shows the result of the equation
-                    !(finalResult == "NaN")?total.textContent = String(finalResult):total.textContent ="ERROR!";
-                    //show the result
+                    let checkResult = finalResult;
+                    let decimal = checkResult.join("").split("");
+                    let decimalLoc = decimal.findIndex(decimal=>decimal==".");//locate decimal
+                    if(decimal.filter(decimal => decimal == ".").length === 1 ){// if there is a decimal
+                           if(decimal.slice(decimalLoc,decimal.length).length-1 >= 5){//if the length after the decimal is greater than or equal 5
+                                total.textContent = String(Number(decimal.join("")).toFixed(4)); //round only upto 4 numbers
+                           }else{
+                                total.textContent = String(finalResult);   //just display the result if the value after dec is less than 5  
+                           }
+                    }else{
+                    !(finalResult == "NaN") ?total.textContent = String(finalResult):total.textContent ="ERROR!";// if there no dec just display result
+                    }
+                    //remove disabled class
+                    removeEffect('all');//remove each element disabled button
                     break;
                 case "C":
+                    //remove disabled class
+                    removeEffect('all');//remove each element disabled button
                     total.textContent ="0";//set the content to 0 again
                     break;
                 case "CE":
                     eraseValue();//removes the last value added
+                    if(total.textContent==""){total.textContent="0";} 
                     break;
                 default:
                     if(usedequation.textContent != "0" ){
