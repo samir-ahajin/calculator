@@ -4,8 +4,14 @@ body{
 .center{
     height: 90vh;
     display: flex;
+    flex-direction: column;
+    gap: 5px;
     justify-content: center; 
     align-items: center;
+}
+.header{
+    text-align: center;
+    font-size: 20px;
 }
 .calculator{
     width:  30%;
@@ -16,6 +22,12 @@ body{
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+.footer{
+    margin-top: 15px;
+}
+.content{
+    flex: 1;
 }
 .numbers,.erase,.equation,.result{
     width: 100%;
